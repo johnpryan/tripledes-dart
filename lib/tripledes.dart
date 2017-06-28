@@ -1004,22 +1004,6 @@ List<int> encodeWordArray(String inp) {
         (24 - (i % 4) * 8).toSigned(32);
   }
   return words;
-  // lib-typedarrays WordArray.init()
-  /*
-  var resultWords = [];
-  for (var i = 0; i < words.length; i++) {
-    var idx = rightShift32(i, 2);
-    if (resultWords.length < idx + 1) {
-      resultWords.length = idx + 1;
-      for (var j = 0; j < resultWords.length; j++) {
-        if (resultWords[j] == null) resultWords[j] = 0;
-      }
-//      resultWords[idx] |= words[i] << (24 - (i % 4) * 8);
-    }
-//    resultWords[idx] = words[i];
-  }
-  return resultWords;
-  */
 }
 
 // Latin1.stringify
