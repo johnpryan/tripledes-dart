@@ -3,6 +3,8 @@ library tripledes;
 import 'dart:typed_data';
 import 'dart:math';
 
+
+
 /// BufferedBlockAlgorithm.process()
 abstract class BaseEngine {
   int processBlock(List<int> M, int offset);
@@ -971,7 +973,11 @@ concat(List<int> a, List<int> b) {
   } else {
     // Copy one word at a time
     for (var i = 0; i < thatSigBytes; i += 4) {
-      thisWords[(thisSigBytes + i) >> 2] = thatWords[i >> 2];
+      var idx = (thisSigBytes + i) >> 2;
+      if (idx >= thisWords.length) {
+        thisWords.length = idx + 1;
+      }
+      thisWords[idx] = thatWords[i >> 2];
     }
   }
   a.length = thisSigBytes + thatSigBytes;

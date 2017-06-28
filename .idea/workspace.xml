@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5def910-45e4-443d-9430-9ee1afe9baf3" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/des2.dart" afterPath="$PROJECT_DIR$/lib/tripledes.dart" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/test/des_test.dart" afterPath="$PROJECT_DIR$/test/tripledes_test.dart" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/des.iml" afterPath="$PROJECT_DIR$/.idea/des.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/tripledes.dart" afterPath="$PROJECT_DIR$/lib/tripledes.dart" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -31,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tripledes.dart" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tripledes.dart" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/tripledes.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="46" column="4" lean-forward="false" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
+            <state relative-caret-position="75">
+              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
               <folding>
                 <element signature="e#20#45#0" expanded="true" />
               </folding>
@@ -93,13 +90,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tripledes_test.dart" pinned="false" current-in-tab="false">
+      <file leaf-file-name="tripledes_test.dart" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/tripledes_test.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="104" column="6" lean-forward="false" selection-start-line="104" selection-start-column="6" selection-end-line="104" selection-end-column="6" />
+            <state relative-caret-position="527">
+              <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
               <folding>
-                <element signature="e#0#5198#0" expanded="true" />
+                <element signature="e#0#4897#0" expanded="true" />
                 <element signature="e#152#194#0" expanded="true" />
               </folding>
             </state>
@@ -119,8 +116,8 @@
       <file leaf-file-name="codec.dart" pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/Cellar/dart/1.24.2/libexec/lib/convert/codec.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="19" column="4" lean-forward="false" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+            <state relative-caret-position="270">
+              <caret line="20" column="4" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -156,8 +153,8 @@
         <option value="$PROJECT_DIR$/lib/des2.dart" />
         <option value="$PROJECT_DIR$/pubspec.yaml" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/test/tripledes_test.dart" />
         <option value="$PROJECT_DIR$/lib/tripledes.dart" />
+        <option value="$PROJECT_DIR$/test/tripledes_test.dart" />
       </list>
     </option>
   </component>
@@ -168,10 +165,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="245" />
-    <option name="y" value="183" />
-    <option name="width" value="1680" />
-    <option name="height" value="992" />
+    <option name="x" value="1280" />
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
+    <option name="height" value="1417" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -380,59 +377,59 @@
       <option name="presentableId" value="Default" />
       <updated>1498629433442</updated>
       <workItem from="1498629434675" duration="17348000" />
-      <workItem from="1498679840179" duration="4237000" />
+      <workItem from="1498679840179" duration="5156000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 11m 27s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 59m 11s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 23m 10s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 59m 16s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 27m 17s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 59m 55s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 44m 05s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 00m 08s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 44m 18s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 00m 16s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 48m 23s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 01m 01s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 51m 14s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 02m 07s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 54m 31s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 02m 27s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 54m 34s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 05m 32s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 14h 57m 26s.xml">
+    <history-entry file="UTF-8_=__word_array_in_tripledes_test_dart - 2017.06.28 at 15h 05m 36s.xml">
       <configuration name="UTF-8 =&gt; word array in tripledes_test.dart" configurationId="DartTestRunConfigurationType" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21585000" />
+    <option name="totallyTimeSpent" value="22504000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="245" y="183" width="1680" height="992" extended-state="0" />
+    <frame x="1280" y="23" width="1280" height="1417" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16696805" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22001588" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Dart Analysis" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30775192" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30716982" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43222222" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43222222" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -454,37 +451,32 @@
       <breakpoints>
         <line-breakpoint type="Dart">
           <url>file://$PROJECT_DIR$/test/tripledes_test.dart</url>
-          <line>124</line>
+          <line>118</line>
         </line-breakpoint>
         <line-breakpoint type="Dart">
           <url>file://$PROJECT_DIR$/lib/tripledes.dart</url>
-          <line>205</line>
+          <line>211</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint type="Dart">
           <url>file://$PROJECT_DIR$/lib/tripledes.dart</url>
-          <line>206</line>
+          <line>212</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint type="Dart">
           <url>file://$PROJECT_DIR$/lib/tripledes.dart</url>
-          <line>995</line>
+          <line>1005</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint type="Dart">
           <url>file://$PROJECT_DIR$/lib/tripledes.dart</url>
-          <line>102</line>
+          <line>108</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/test/tripledes_test.dart</url>
-          <line>103</line>
+          <line>97</line>
           <option name="timeStamp" value="94" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/tripledes.dart</url>
-          <line>46</line>
-          <option name="timeStamp" value="100" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -542,14 +534,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/Cellar/dart/1.24.2/libexec/lib/convert/codec.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="19" column="4" lean-forward="false" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test-0.12.23+1/lib/src/backend/declarer.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="456">
@@ -566,23 +550,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/tripledes_test.dart">
+    <entry file="file:///usr/local/Cellar/dart/1.24.2/libexec/lib/convert/codec.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="104" column="6" lean-forward="false" selection-start-line="104" selection-start-column="6" selection-end-line="104" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#5198#0" expanded="true" />
-            <element signature="e#152#194#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="270">
+          <caret line="20" column="4" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/tripledes.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="46" column="4" lean-forward="false" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
             <element signature="e#20#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/tripledes_test.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#4897#0" expanded="true" />
+            <element signature="e#152#194#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -41,26 +41,6 @@ void main() {
           '0000000000000001', '166b40b44aba4bd6', false).run();
     });
 
-    test('kill me ', () {
-      var unknown = "HflZXsTrj9kJzNmBsw/fqg==";
-      var expected = "68f2803487f320";
-    });
-
-//    test('DELETE ME', () {
-//      var cipher = decodeWordArray(hexParse("800101010101010180010101010101018001010101010101"));
-//      var inp = decodeWordArray(hexParse("0000000000000000"));
-//      var expected = decodeWordArray(hexParse("95a8d72813daa94d"));
-//      var inpEncoded = encodeWordArray(inp);
-//      var cipherEncoded = encodeWordArray(cipher);
-//      var expectedEncoded = encodeWordArray(expected);
-//
-//      var b = new TripleDESEngine();
-//      b.init(true, cipherEncoded);
-//      var result = new List(inpEncoded.length);
-//      b.processBlock(inpEncoded, 0, result, 0);
-//      expect(decodeWordArray(result), startsWith(expected));
-//    });
-
     test('encode and decode', () {
       var inp = 'Hello, World!';
       var inpEncoded = encodeWordArray(inp);
