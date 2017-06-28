@@ -1,4 +1,6 @@
-# Triple DES written in dart
+# tripledes-dart
+
+Triple DES and DES block cipher implementation ported from CryptoJS
 
 This is ported from CryptoJS.  The latest version can be found
 [bryx/cryptojs][crypto-js] or [sytelus/CryptoJS][crypto-js2]
