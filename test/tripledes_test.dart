@@ -56,7 +56,7 @@ void main() {
     });
 
     test('decodeWordArray1', () {
-      expect(decodeWordArray([0x12345678]), equals("\x12\x34\x56\x78"));
+      expect(decodeWordArray([0x12345678, 0, 0, 0]), equals("\x12\x34\x56\x78"));
     });
 
     test('encodeWordArray', () {
