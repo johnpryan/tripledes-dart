@@ -1,8 +1,58 @@
 library tripledes;
 
 import 'dart:typed_data';
+import 'dart:math';
 
-class DESEngine {
+/// BufferedBlockAlgorithm.process()
+abstract class BaseEngine {
+  int processBlock(List<int> M, int offset);
+
+  List<int> process(List<int> dataWords) {
+    var doFlush = false;
+    var dataSigBytes = dataWords.length;
+    var blockSize = 2;
+    var blockSizeBytes = blockSize * 4;
+    var minBufferSize = 0;
+
+    // Count blocks ready
+    var nBlocksReady = dataSigBytes ~/ blockSizeBytes;
+    if (doFlush) {
+      // Round up to include partial blocks
+      nBlocksReady = nBlocksReady.ceil();
+    } else {
+      // Round down to include only full blocks,
+      // less the number of blocks that must remain in the buffer
+      nBlocksReady = max((nBlocksReady | 0) - minBufferSize, 0);
+    }
+
+    // Count words ready
+    var nWordsReady = nBlocksReady * blockSize;
+
+    // Count bytes ready
+    var nBytesReady = min(nWordsReady * 4, dataSigBytes);
+
+    // Process blocks
+    List<int> processedWords;
+    if (nWordsReady != 0) {
+      for (var offset = 0; offset < nWordsReady; offset += blockSize) {
+        // Perform concrete-algorithm logic
+        processBlock(dataWords, offset);
+      }
+
+      // Remove processed words
+      processedWords = dataWords.getRange(0, nWordsReady).toList();
+      dataWords.removeRange(0, nWordsReady);
+    }
+    return new List<int>.generate(nBytesReady, (i) {
+      if (i < processedWords.length) {
+        return processedWords[i];
+      }
+      return 0;
+    });
+  }
+}
+
+class DESEngine extends BaseEngine {
   bool _forEncryption;
   List<int> _key;
   List<List<int>> _subKeys;
@@ -21,7 +71,9 @@ class DESEngine {
     var keyBits = new List<int>(56);
     for (var i = 0; i < 56; i++) {
       var keyBitPos = PC1[i] - 1;
-      keyBits[i] = (_key[keyBitPos >> 5] >> (31 - keyBitPos % 32)) & 1;
+      keyBits[i] = (rightShift32(
+              _key[rightShift32(keyBitPos, 5)], (31 - keyBitPos % 32))) &
+          1;
     }
 
     // Assemble 16 subkeys
@@ -37,25 +89,25 @@ class DESEngine {
       for (var i = 0; i < 24; i++) {
         // Select from the left 28 key bits
         subKey[(i ~/ 6) | 0] |=
-            keyBits[((PC2[i] - 1) + bitShift) % 28] << (31 - i % 6);
+            leftShift32(keyBits[((PC2[i] - 1) + bitShift) % 28], (31 - i % 6));
 
         // Select from the right 28 key bits
-        subKey[4 + ((i ~/ 6) | 0)] |=
-            keyBits[28 + (((PC2[i + 24] - 1) + bitShift) % 28)] << (31 - i % 6);
+        subKey[4 + ((i ~/ 6) | 0)] |= leftShift32(
+            keyBits[28 + (((PC2[i + 24] - 1) + bitShift) % 28)], (31 - i % 6));
       }
 
       // Since each subkey is applied to an expanded 32-bit input,
       // the subkey can be broken into 8 values scaled to 32-bits,
       // which allows the key to be used without expansion
-      subKey[0] = (subKey[0] << 1) | (subKey[0] >> 31);
+      subKey[0] = (subKey[0] << 1).toSigned(32) | rightShift32(subKey[0], 31);
       for (var i = 1; i < 7; i++) {
-        subKey[i] = subKey[i] >> ((i - 1) * 4 + 3);
+        subKey[i] = rightShift32(subKey[i], ((i - 1) * 4 + 3));
       }
-      subKey[7] = (subKey[7] << 5) | (subKey[7] >> 27);
+      subKey[7] = (subKey[7] << 5).toSigned(32) | (rightShift32(subKey[7], 27));
     }
   }
 
-  int processBlock(List<int> M, int offset, List<int> out, int outOff) {
+  int processBlock(List<int> M, int offset) {
     List<List<int>> invSubKeys = new List(16);
     if (!_forEncryption) {
       for (var i = 0; i < 16; i++) {
@@ -84,11 +136,7 @@ class DESEngine {
       // Feistel function
       var f = 0.toSigned(32);
       for (var i = 0; i < 8; i++) {
-        f |=
-            ((SBOX_P[i][((rBlock ^ subKey[i].toSigned(32)) & SBOX_MASK[i]) >> 0]
-                        as int)
-                    .toSigned(32))
-                .toSigned(32);
+        (f |= (SBOX_P[i][((rBlock ^ subKey[i]).toSigned(32) & SBOX_MASK[i]).toUnsigned(32)]).toSigned(32)).toSigned(32);
       }
       this._lBlock = rBlock.toSigned(32);
       this._rBlock = (lBlock ^ f).toSigned(32);
@@ -107,8 +155,8 @@ class DESEngine {
     exchangeLR(4, 0x0f0f0f0f);
 
     // Set output
-    out[offset] = this._lBlock;
-    out[offset + 1] = this._rBlock;
+    M[offset] = this._lBlock;
+    M[offset + 1] = this._rBlock;
     return blockSize;
   }
 
@@ -122,20 +170,25 @@ class DESEngine {
 
   // Swap bits across the left and right words
   void exchangeLR(offset, mask) {
-    var t = (((this._lBlock >> offset).toSigned(32) ^ this._rBlock) & mask)
-        .toSigned(32);
+    var t =
+        (((rightShift32(this._lBlock, offset)).toSigned(32) ^ this._rBlock) &
+                mask)
+            .toSigned(32);
     (this._rBlock ^= t).toSigned(32);
     this._lBlock ^= (t << offset).toSigned(32);
   }
 
   void exchangeRL(offset, mask) {
-    var t = (((this._rBlock >> offset).toSigned(32) ^ this._lBlock) & mask).toSigned(32);
+    var t =
+        (((rightShift32(this._rBlock, offset)).toSigned(32) ^ this._lBlock) &
+                mask)
+            .toSigned(32);
     (this._lBlock ^= t).toSigned(32);
     this._rBlock ^= (t << offset).toSigned(32);
   }
 }
 
-class TripleDESEngine {
+class TripleDESEngine extends BaseEngine {
   List<int> _key;
   bool _forEncryption;
 
@@ -148,28 +201,24 @@ class TripleDESEngine {
     _key = key;
   }
 
-  int processBlock(List<int> M, int offset, List<int> result, int outOff) {
+  int processBlock(List<int> M, int offset) {
     var des1 = new DESEngine();
     var des2 = new DESEngine();
     var des3 = new DESEngine();
-    var out = new List.from(M);
     if (_forEncryption) {
       des1.init(true, _key.sublist(0, 2));
-      des1.processBlock(out, offset, out, outOff);
+      des1.processBlock(M, offset);
       des2.init(false, _key.sublist(2, 4));
-      des2.processBlock(out, offset, out, outOff);
+      des2.processBlock(M, offset);
       des3.init(true, _key.sublist(4, 6));
-      des3.processBlock(out, offset, out, outOff);
+      des3.processBlock(M, offset);
     } else {
       des3.init(false, _key.sublist(4, 6));
-      des3.processBlock(out, offset, out, outOff);
+      des3.processBlock(M, offset);
       des2.init(true, _key.sublist(2, 4));
-      des2.processBlock(out, offset, out, outOff);
+      des2.processBlock(M, offset);
       des1.init(false, _key.sublist(0, 2));
-      des1.processBlock(out, offset, out, outOff);
-    }
-    for (var i = 0; i < out.length; i++) {
-      result[i] = out[i];
+      des1.processBlock(M, offset);
     }
     return blockSize;
   }
@@ -840,18 +889,18 @@ var SBOX_MASK = [
 ];
 
 int rightShift32(int num, int n) {
-  return (num & 0xFFFFFFFF) >> n;
+  return ((num & 0xFFFFFFFF) >> n).toSigned(32);
 }
 
 int leftShift32(int num, int n) {
-  return (num & 0xFFFFFFFF) << n;
+  return ((num & 0xFFFFFFFF) << n).toSigned(32);
 }
 
 Uint8List uInt8ListFrom32BitList(List<int> bit32) {
   var result = new Uint8List(bit32.length * 4);
   for (var i = 0; i < bit32.length; i++) {
     for (var j = 0; j < 4; j++) {
-      result[i * 4 + j] = bit32[i] /*.toUnsigned(32)*/ >> (j * 8);
+      result[i * 4 + j] = bit32[i] /*.toSigned(32)*/ >> (j * 8);
     }
   }
   return result;
@@ -870,4 +919,115 @@ List<int> bit32ListFromUInt8List(Uint8List bytes) {
     result[i] = result[i] << 24;
   }
   return result;
+}
+
+void pkcs7Pad(List<int> data, int blockSize) {
+  var blockSizeBytes = blockSize * 4;
+  // Count padding bytes
+  var nPaddingBytes = blockSizeBytes - data.length % blockSizeBytes;
+
+  // Create padding word
+  var paddingWord = (nPaddingBytes << 24) |
+  (nPaddingBytes << 16) |
+  (nPaddingBytes << 8) |
+  nPaddingBytes;
+
+  // Create padding
+  var paddingWords = [];
+  for (var i = 0; i < nPaddingBytes; i += 4) {
+    paddingWords.add(paddingWord);
+  }
+
+  var padding = new List<int>.generate(nPaddingBytes, (i) {
+    if (i < paddingWords.length) {
+      return paddingWords[i];
+    } else {
+      return 0;
+    }
+  });
+
+  // Add padding
+  concat(data, padding);
+}
+
+/// wordarray.concat()
+concat(List<int> a, List<int> b) {
+  // Shortcuts
+  var thisWords = a;
+  var thatWords = b;
+  var thisSigBytes = a.length;
+  var thatSigBytes = b.length;
+
+  // Clamp excess bits
+  clamp(a);
+
+  // Concat
+  if (thisSigBytes % 4 != 0) {
+    // Copy one byte at a time
+    for (var i = 0; i < thatSigBytes; i++) {
+      var thatByte = (thatWords[i >> 2] >> (24 - (i % 4) * 8)) & 0xff;
+      thisWords[(thisSigBytes + i) >> 2] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+    }
+  } else {
+    // Copy one word at a time
+    for (var i = 0; i < thatSigBytes; i += 4) {
+      thisWords[(thisSigBytes + i) >> 2] = thatWords[i >> 2];
+    }
+  }
+  a.length = thisSigBytes + thatSigBytes;
+}
+
+void clamp(List<int> data) {
+  // Shortcuts
+  var words = data;
+  var sigBytes = data.length;
+
+  // Clamp
+  words[rightShift32(sigBytes, 2)] &= (0xffffffff << (32 - (sigBytes % 4) * 8)).toSigned(32);
+  words.length = (sigBytes / 4).ceil();
+}
+
+// Latin1.parse
+List<int> encodeWordArray(String inp) {
+  var words = new List.generate(inp.length, (_) => 0);
+  for (var i = 0; i < inp.length; i++) {
+    words[i >> 2] |= (inp.codeUnitAt(i) & 0xff).toSigned(32) <<
+        (24 - (i % 4) * 8).toSigned(32);
+  }
+  return words;
+  // lib-typedarrays WordArray.init()
+  /*
+  var resultWords = [];
+  for (var i = 0; i < words.length; i++) {
+    var idx = rightShift32(i, 2);
+    if (resultWords.length < idx + 1) {
+      resultWords.length = idx + 1;
+      for (var j = 0; j < resultWords.length; j++) {
+        if (resultWords[j] == null) resultWords[j] = 0;
+      }
+//      resultWords[idx] |= words[i] << (24 - (i % 4) * 8);
+    }
+//    resultWords[idx] = words[i];
+  }
+  return resultWords;
+  */
+}
+
+// Latin1.stringify
+String decodeWordArray(List<int> words) {
+  var sigBytes = words.length;
+  var chars = <int>[];
+  for (var i = 0; i < sigBytes; i++) {
+    if (words[i >> 2] == null) {
+      words[i >> 2] = 0;
+    }
+    var bite = ((words[i >> 2]).toSigned(32) >> (24 - (i % 4) * 8)) & 0xff;
+    chars.add(bite);
+  }
+
+  return new String.fromCharCodes(chars);
+}
+
+void process() {
+
 }

@@ -1,19 +1,7 @@
-# des2
+# Triple DES written in dart
 
-A library for Dart developers. It is awesome.
+This is ported from CryptoJS.  The latest version can be found
+[bryx/cryptojs][crypto-js] or [sytelus/CryptoJS][crypto-js2]
 
-## Usage
-
-A simple usage example:
-
-    import 'package:des2/des2.dart';
-
-    main() {
-      var awesome = new Awesome();
-    }
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+crypto-js1: https://github.com/brix/crypto-js
+crypto-js2: https://github.com/sytelus/CryptoJS

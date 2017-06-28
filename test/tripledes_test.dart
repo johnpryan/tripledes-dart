@@ -1,8 +1,9 @@
 // Copyright (c) 2017, john. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-import 'package:des2/des2.dart';
+import 'package:tripledes/tripledes.dart';
 import 'package:test/test.dart';
+import 'dart:convert';
 
 void main() {
   group('Triple DES', () {
@@ -40,11 +41,61 @@ void main() {
           '0000000000000001', '166b40b44aba4bd6', false).run();
     });
 
-    test('string', () {
+    test('kill me ', () {
+      var unknown = "HflZXsTrj9kJzNmBsw/fqg==";
+      var expected = "68f2803487f320";
+    });
+
+//    test('DELETE ME', () {
+//      var cipher = decodeWordArray(hexParse("800101010101010180010101010101018001010101010101"));
+//      var inp = decodeWordArray(hexParse("0000000000000000"));
+//      var expected = decodeWordArray(hexParse("95a8d72813daa94d"));
+//      var inpEncoded = encodeWordArray(inp);
+//      var cipherEncoded = encodeWordArray(cipher);
+//      var expectedEncoded = encodeWordArray(expected);
+//
+//      var b = new TripleDESEngine();
+//      b.init(true, cipherEncoded);
+//      var result = new List(inpEncoded.length);
+//      b.processBlock(inpEncoded, 0, result, 0);
+//      expect(decodeWordArray(result), startsWith(expected));
+//    });
+
+    test('encode and decode', () {
+      var inp = 'Hello, World!';
+      var inpEncoded = encodeWordArray(inp);
+      var inpDecoded= decodeWordArray(inpEncoded);
+      expect(inpDecoded, startsWith(inp));
+    });
+
+    test('encode and decode 2', () {
+      var inp = 'HflZXsTrj9kJzNmBsw/fqg==';
+      var inpEncoded = encodeWordArray(inp);
+      var inpDecoded= decodeWordArray(inpEncoded);
+      expect(inpDecoded, startsWith(inp));
+    });
+
+    test('decodeWordArray1', () {
+      expect(decodeWordArray([0x12345678]), equals("\x12\x34\x56\x78"));
+    });
+
+    test('encodeWordArray', () {
+      expect(encodeWordArray("\x12\x34\x56\x78").first, equals(0x12345678));
+    });
+
+    test('UTF-8 => word array', () {
       var inp = 'Hello, World!';
       var cipher = 'cipher';
       var expected = "HflZXsTrj9kJzNmBsw/fqg==";
-      new TestCase(inp, cipher, expected, true);
+      var inpEncoded = encodeWordArray(inp);
+      var cipherEncoded = encodeWordArray(cipher);
+      pkcs7Pad(inpEncoded, 2);
+
+      var b = new DESEngine();
+      b.init(true, cipherEncoded);
+      var result = b.process(inpEncoded);
+
+      expect(BASE64.encode(decodeWordArray(result).codeUnits), equals(expected));
     });
   });
 }
@@ -63,9 +114,10 @@ class TestCase {
     var inp = hexParse(this.inp);
     var expected = hexParse(this.expected);
     b.init(true, key);
-    var result = new List(inp.length);
-    b.processBlock(inp, 0, result, 0);
+    var result = new List.from(inp);
+    b.processBlock(result, 0);
     expect(result, equals(expected));
+    expect(hexToString(result), equals(this.expected));
   }
 }
 
@@ -99,3 +151,4 @@ String hexToString(List<int> wordArray) {
   }
   return hexChars.join('');
 }
+
