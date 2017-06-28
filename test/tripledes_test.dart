@@ -9,54 +9,63 @@ void main() {
   group('Triple DES', () {
     test('1', () {
       new TestCase('800101010101010180010101010101018001010101010101',
-          '0000000000000000', '95a8d72813daa94d', true).run();
+              '0000000000000000', '95a8d72813daa94d', true)
+          .run();
     });
 
     test('2', () {
       new TestCase('010101010101010201010101010101020101010101010102',
-          '0000000000000000', '869efd7f9f265a09', true).run();
+              '0000000000000000', '869efd7f9f265a09', true)
+          .run();
     });
     test('3', () {
       new TestCase('010101010101010101010101010101010101010101010101',
-          '8000000000000000', '95f8a5e5dd31d900', true).run();
+              '8000000000000000', '95f8a5e5dd31d900', true)
+          .run();
     });
     test('4', () {
       new TestCase('010101010101010101010101010101010101010101010101',
-          '0000000000000001', '166b40b44aba4bd6', true).run();
+              '0000000000000001', '166b40b44aba4bd6', true)
+          .run();
     });
     test('5', () {
       new TestCase('800101010101010180010101010101018001010101010101',
-          '0000000000000000', '95a8d72813daa94d', false).run();
+              '0000000000000000', '95a8d72813daa94d', false)
+          .run();
     });
     test('6', () {
       new TestCase('010101010101010201010101010101020101010101010102',
-          '0000000000000000', '869efd7f9f265a09', false).run();
+              '0000000000000000', '869efd7f9f265a09', false)
+          .run();
     });
     test('7', () {
       new TestCase('010101010101010101010101010101010101010101010101',
-          '8000000000000000', '95f8a5e5dd31d900', false).run();
+              '8000000000000000', '95f8a5e5dd31d900', false)
+          .run();
     });
     test('8', () {
       new TestCase('010101010101010101010101010101010101010101010101',
-          '0000000000000001', '166b40b44aba4bd6', false).run();
+              '0000000000000001', '166b40b44aba4bd6', false)
+          .run();
     });
 
     test('encode and decode', () {
       var inp = 'Hello, World!';
       var inpEncoded = encodeWordArray(inp);
-      var inpDecoded= decodeWordArray(inpEncoded);
+      var inpDecoded = decodeWordArray(inpEncoded);
       expect(inpDecoded, startsWith(inp));
     });
 
     test('encode and decode 2', () {
       var inp = 'HflZXsTrj9kJzNmBsw/fqg==';
       var inpEncoded = encodeWordArray(inp);
-      var inpDecoded= decodeWordArray(inpEncoded);
+      var inpDecoded = decodeWordArray(inpEncoded);
       expect(inpDecoded, startsWith(inp));
     });
 
     test('decodeWordArray1', () {
-      expect(decodeWordArray([0x12345678, 0, 0, 0]), equals("\x12\x34\x56\x78"));
+      expect(
+          decodeWordArray([0x12345678, 0, 0, 0]), equals("\x12\x34\x56\x78"));
     });
 
     test('encodeWordArray', () {
@@ -75,7 +84,8 @@ void main() {
       b.init(true, cipherEncoded);
       var result = b.process(inpEncoded);
 
-      expect(BASE64.encode(decodeWordArray(result).codeUnits), equals(expected));
+      expect(
+          BASE64.encode(decodeWordArray(result).codeUnits), equals(expected));
     });
   });
 }
@@ -131,4 +141,3 @@ String hexToString(List<int> wordArray) {
   }
   return hexChars.join('');
 }
-

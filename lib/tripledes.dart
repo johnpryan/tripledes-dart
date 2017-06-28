@@ -3,8 +3,6 @@ library tripledes;
 import 'dart:typed_data';
 import 'dart:math';
 
-
-
 /// BufferedBlockAlgorithm.process()
 abstract class BaseEngine {
   int processBlock(List<int> M, int offset);
@@ -138,7 +136,10 @@ class DESEngine extends BaseEngine {
       // Feistel function
       var f = 0.toSigned(32);
       for (var i = 0; i < 8; i++) {
-        (f |= (SBOX_P[i][((rBlock ^ subKey[i]).toSigned(32) & SBOX_MASK[i]).toUnsigned(32)]).toSigned(32)).toSigned(32);
+        (f |= (SBOX_P[i][((rBlock ^ subKey[i]).toSigned(32) & SBOX_MASK[i])
+                    .toUnsigned(32)])
+                .toSigned(32))
+            .toSigned(32);
       }
       this._lBlock = rBlock.toSigned(32);
       this._rBlock = (lBlock ^ f).toSigned(32);
@@ -930,9 +931,9 @@ void pkcs7Pad(List<int> data, int blockSize) {
 
   // Create padding word
   var paddingWord = (nPaddingBytes << 24) |
-  (nPaddingBytes << 16) |
-  (nPaddingBytes << 8) |
-  nPaddingBytes;
+      (nPaddingBytes << 16) |
+      (nPaddingBytes << 8) |
+      nPaddingBytes;
 
   // Create padding
   var paddingWords = [];
@@ -968,7 +969,8 @@ concat(List<int> a, List<int> b) {
     // Copy one byte at a time
     for (var i = 0; i < thatSigBytes; i++) {
       var thatByte = (thatWords[i >> 2] >> (24 - (i % 4) * 8)) & 0xff;
-      thisWords[(thisSigBytes + i) >> 2] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+      thisWords[(thisSigBytes + i) >> 2] |=
+          thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
     }
   } else {
     // Copy one word at a time
@@ -989,7 +991,8 @@ void clamp(List<int> data) {
   var sigBytes = data.length;
 
   // Clamp
-  words[rightShift32(sigBytes, 2)] &= (0xffffffff << (32 - (sigBytes % 4) * 8)).toSigned(32);
+  words[rightShift32(sigBytes, 2)] &=
+      (0xffffffff << (32 - (sigBytes % 4) * 8)).toSigned(32);
   words.length = (sigBytes / 4).ceil();
 }
 
@@ -1034,6 +1037,4 @@ String decodeWordArray(List<int> words) {
   return new String.fromCharCodes(chars);
 }
 
-void process() {
-
-}
+void process() {}
