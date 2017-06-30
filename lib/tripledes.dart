@@ -1,16 +1,68 @@
 library tripledes;
 
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:math';
 
+class BlockCipher {
+  final Engine engine;
+  final String key;
+
+  BlockCipher(this.engine, this.key);
+
+  String encode(String message) {
+    engine.init(true, utf8ToWords(key));
+    var result = engine.process(utf8ToWords(message));
+    engine.reset();
+    return wordsToUtf8(result);
+  }
+
+  String decode(String ciphertext) {
+    var b = new DESEngine()..init(false, utf8ToWords(key));
+    var r = b.process(utf8ToWords(ciphertext));
+    engine.reset();
+    return wordsToUtf8(r);
+  }
+
+  String encodeB64(String message) {
+    return BASE64.encode(encode(message).codeUnits);
+  }
+
+  String decodeB64(String ciphertext) {
+    var b = new DESEngine()..init(false, utf8ToWords(key));
+    var result = b.process(parseBase64(ciphertext));
+    engine.reset();
+    return wordsToUtf8(result);
+  }
+}
+
+abstract class Engine {
+  void init(bool forEncryption, List<int> key);
+  List<int> process(List<int> dataWords);
+  void reset();
+}
+
 /// BufferedBlockAlgorithm.process()
-abstract class BaseEngine {
+abstract class BaseEngine implements Engine {
+  bool _forEncryption;
+  List<int> _key;
+
+  void init(bool forEncryption, List<int> key) {
+    _key = key;
+    _forEncryption = forEncryption;
+  }
+
   int processBlock(List<int> M, int offset);
 
   List<int> process(List<int> dataWords) {
+    var blockSize = 2;
+
+    if (_forEncryption) {
+      pkcs7Pad(dataWords, blockSize);
+    }
+
     var doFlush = false;
     var dataSigBytes = dataWords.length;
-    var blockSize = 2;
     var blockSizeBytes = blockSize * 4;
     var minBufferSize = 0;
 
@@ -43,18 +95,23 @@ abstract class BaseEngine {
       processedWords = dataWords.getRange(0, nWordsReady).toList();
       dataWords.removeRange(0, nWordsReady);
     }
-    return new List<int>.generate(nBytesReady, (i) {
+
+    var result = new List<int>.generate(nBytesReady, (i) {
       if (i < processedWords.length) {
         return processedWords[i];
       }
       return 0;
     });
+
+    if (!_forEncryption) {
+      pkcs7Unpad(result, blockSize);
+    }
+
+    return result;
   }
 }
 
 class DESEngine extends BaseEngine {
-  bool _forEncryption;
-  List<int> _key;
   List<List<int>> _subKeys;
   int _lBlock;
   int _rBlock;
@@ -64,8 +121,7 @@ class DESEngine extends BaseEngine {
   int get blockSize => 64 ~/ 32;
 
   void init(bool forEncryption, List<int> key) {
-    _key = key;
-    this._forEncryption = forEncryption;
+    super.init(forEncryption, key);
 
     // Select 56 bits according to PC1
     var keyBits = new List<int>(56);
@@ -198,11 +254,6 @@ class TripleDESEngine extends BaseEngine {
   String get algorithmName => "TripleDES";
 
   int get blockSize => 64 ~/ 32;
-
-  void init(bool forEncryption, List<int> key) {
-    _forEncryption = forEncryption;
-    _key = key;
-  }
 
   int processBlock(List<int> M, int offset) {
     var des1 = new DESEngine();
@@ -953,6 +1004,12 @@ void pkcs7Pad(List<int> data, int blockSize) {
   concat(data, padding);
 }
 
+void pkcs7Unpad(List<int> data, int blockSize) {
+  var sigBytes = data.length;
+  var nPaddingBytes = data[rightShift32(sigBytes - 1, 2)] & 0xff;
+  data.length -= nPaddingBytes;
+}
+
 /// wordarray.concat()
 concat(List<int> a, List<int> b) {
   // Shortcuts
@@ -997,7 +1054,7 @@ void clamp(List<int> data) {
 }
 
 // Latin1.parse
-List<int> encodeWordArray(String inp) {
+List<int> utf8ToWords(String inp) {
   var words = new List.generate(inp.length, (_) => 0);
   for (var i = 0; i < inp.length; i++) {
     words[i >> 2] |= (inp.codeUnitAt(i) & 0xff).toSigned(32) <<
@@ -1007,7 +1064,7 @@ List<int> encodeWordArray(String inp) {
 }
 
 // Latin1.stringify
-String decodeWordArray(List<int> words) {
+String wordsToUtf8(List<int> words) {
   var sigBytes = words.length;
   var chars = <int>[];
   for (var i = 0; i < sigBytes; i++) {
@@ -1021,4 +1078,55 @@ String decodeWordArray(List<int> words) {
   return new String.fromCharCodes(chars);
 }
 
-void process() {}
+List<int> parseBase64(String base64Str) {
+  const map =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  List reverseMap;
+  // Shortcuts
+  var base64StrLength = base64Str.length;
+
+  if (reverseMap == null) {
+    reverseMap = new List<int>(123);
+    for (var j = 0; j < map.length; j++) {
+      reverseMap[map.codeUnits[j]] = j;
+    }
+  }
+
+  // Ignore padding
+  var paddingChar = map.codeUnits[64];
+  if (paddingChar != null) {
+    var paddingIndex = base64Str.codeUnits.indexOf(paddingChar);
+    if (paddingIndex != -1) {
+      base64StrLength = paddingIndex;
+    }
+  }
+
+  List<int> parseLoop(
+      String base64Str, int base64StrLength, List<int> reverseMap) {
+    var words = [];
+    var nBytes = 0;
+    for (var i = 0; i < base64StrLength; i++) {
+      if (i % 4 != 0) {
+        var bits1 = reverseMap[base64Str.codeUnits[i - 1]] <<
+            ((i % 4) * 2).toSigned(32);
+        var bits2 =
+            rightShift32(reverseMap[base64Str.codeUnits[i]], (6 - (i % 4) * 2))
+                .toSigned(32);
+        var idx = rightShift32(nBytes, 2);
+        if (words.length <= idx) {
+          words.length = idx + 1;
+        }
+        for (var i = 0; i < words.length; i++) {
+          if (words[i] == null) words[i] = 0;
+        }
+        words[idx] |= ((bits1 | bits2) << (24 - (nBytes % 4) * 8)).toSigned(32);
+        nBytes++;
+      }
+    }
+    return new List<int>.generate(
+        nBytes, (i) => i < words.length ? words[i] : 0);
+  }
+
+  // Convert
+  return parseLoop(base64Str, base64StrLength, reverseMap);
+}

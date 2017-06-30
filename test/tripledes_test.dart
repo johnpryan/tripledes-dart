@@ -51,41 +51,64 @@ void main() {
 
     test('encode and decode', () {
       var inp = 'Hello, World!';
-      var inpEncoded = encodeWordArray(inp);
-      var inpDecoded = decodeWordArray(inpEncoded);
+      var inpEncoded = utf8ToWords(inp);
+      var inpDecoded = wordsToUtf8(inpEncoded);
       expect(inpDecoded, startsWith(inp));
     });
 
     test('encode and decode 2', () {
       var inp = 'HflZXsTrj9kJzNmBsw/fqg==';
-      var inpEncoded = encodeWordArray(inp);
-      var inpDecoded = decodeWordArray(inpEncoded);
+      var inpEncoded = utf8ToWords(inp);
+      var inpDecoded = wordsToUtf8(inpEncoded);
       expect(inpDecoded, startsWith(inp));
     });
 
-    test('decodeWordArray1', () {
-      expect(
-          decodeWordArray([0x12345678, 0, 0, 0]), equals("\x12\x34\x56\x78"));
+    test('decodeWordArray', () {
+      expect(wordsToUtf8([0x12345678, 0, 0, 0]), equals("\x12\x34\x56\x78"));
     });
 
     test('encodeWordArray', () {
-      expect(encodeWordArray("\x12\x34\x56\x78").first, equals(0x12345678));
+      expect(utf8ToWords("\x12\x34\x56\x78").first, equals(0x12345678));
     });
 
     test('UTF-8 => word array', () {
       var inp = 'Hello, World!';
       var cipher = 'cipher';
       var expected = "HflZXsTrj9kJzNmBsw/fqg==";
-      var inpEncoded = encodeWordArray(inp);
-      var cipherEncoded = encodeWordArray(cipher);
-      pkcs7Pad(inpEncoded, 2);
+      var inpEncoded = utf8ToWords(inp);
+      var cipherEncoded = utf8ToWords(cipher);
 
       var b = new DESEngine();
       b.init(true, cipherEncoded);
       var result = b.process(inpEncoded);
 
-      expect(
-          BASE64.encode(decodeWordArray(result).codeUnits), equals(expected));
+      expect(BASE64.encode(wordsToUtf8(result).codeUnits), equals(expected));
+    });
+
+    test('decode Base 64', () {
+      var cipherTextB64 = "HflZXsTrj9kJzNmBsw/fqg==";
+      var cipherTextWords = parseBase64(cipherTextB64);
+      var cipher = utf8ToWords('cipher');
+      var b = new DESEngine();
+      b.init(false, cipher);
+      var result = b.process(cipherTextWords);
+      expect(wordsToUtf8(result), equals('Hello, World!'));
+    });
+
+    test('public API', () {
+      var blockCipher = new BlockCipher(new DESEngine(), "cipher");
+      var message = "Driving in from the edge of town";
+      var ciphertext = blockCipher.encode(message);
+      var decoded = blockCipher.decode(ciphertext);
+      expect(decoded, equals(message));
+    });
+
+    test('public API Base64', () {
+      var blockCipher = new BlockCipher(new DESEngine(), "cipher");
+      var message = "Driving in from the edge of town";
+      var ciphertext = blockCipher.encodeB64(message);
+      var decoded = blockCipher.decodeB64(ciphertext);
+      expect(decoded, equals(message));
     });
   });
 }
