@@ -21,7 +21,7 @@ Uint8List uInt8ListFrom32BitList(List<int> bit32) {
 List<int> bit32ListFromUInt8List(Uint8List bytes) {
   var additionalLength = bytes.length % 4 > 0 ? 4 : 0;
   var result =
-  new List<int>.generate(bytes.length ~/ 4 + additionalLength, (_) => 0);
+      new List<int>.generate(bytes.length ~/ 4 + additionalLength, (_) => 0);
   for (var i = 0; i < bytes.length; i++) {
     var resultIdx = i ~/ 4;
     var bitShiftAmount = (3 - i % 4);
@@ -40,9 +40,9 @@ void pkcs7Pad(List<int> data, int blockSize) {
 
   // Create padding word
   var paddingWord = (nPaddingBytes << 24) |
-  (nPaddingBytes << 16) |
-  (nPaddingBytes << 8) |
-  nPaddingBytes;
+      (nPaddingBytes << 16) |
+      (nPaddingBytes << 8) |
+      nPaddingBytes;
 
   // Create padding
   var paddingWords = [];
@@ -84,8 +84,9 @@ concat(List<int> a, List<int> b) {
     // Copy one byte at a time
     for (var i = 0; i < thatSigBytes; i++) {
       var thatByte = (thatWords[i >> 2] >> (24 - (i % 4) * 8)) & 0xff;
-      thisWords[(thisSigBytes + i) >> 2] |=
-          thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+      var idx = (thisSigBytes + i) >> 2;
+      expandList(thisWords, idx + 1);
+      thisWords[idx] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
     }
   } else {
     // Copy one word at a time
@@ -98,6 +99,22 @@ concat(List<int> a, List<int> b) {
     }
   }
   a.length = thisSigBytes + thatSigBytes;
+}
+
+void expandList(List<int> data, int newLength) {
+  if (newLength <= data.length) {
+    return;
+  }
+
+  // update the length
+  data.length = newLength;
+
+  // replace any new allocations with 0
+  for (var i = 0; i < data.length; i++) {
+    if (data[i] == null) {
+      data[i] = 0;
+    }
+  }
 }
 
 void clamp(List<int> data) {
@@ -168,8 +185,8 @@ List<int> parseBase64(String base64Str) {
         var bits1 = reverseMap[base64Str.codeUnits[i - 1]] <<
             ((i % 4) * 2).toSigned(32);
         var bits2 =
-        rightShift32(reverseMap[base64Str.codeUnits[i]], (6 - (i % 4) * 2))
-            .toSigned(32);
+            rightShift32(reverseMap[base64Str.codeUnits[i]], (6 - (i % 4) * 2))
+                .toSigned(32);
         var idx = rightShift32(nBytes, 2);
         if (words.length <= idx) {
           words.length = idx + 1;

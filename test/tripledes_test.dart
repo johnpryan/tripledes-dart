@@ -111,6 +111,14 @@ void main() {
       var decoded = blockCipher.decodeB64(ciphertext);
       expect(decoded, equals(message));
     });
+
+    test('json string failure', () {
+      var blockCipher = new BlockCipher(new DESEngine(), "somekeys");
+      var message = r'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+      var ciphertext = blockCipher.encode(message);
+      var decoded = blockCipher.decode(ciphertext);
+      expect(decoded, equals(message));
+    });
   });
 }
 

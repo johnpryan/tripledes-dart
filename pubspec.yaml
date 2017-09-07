@@ -1,6 +1,6 @@
 name: tripledes
 description: Triple DES and DES block cipher implementation ported from CryptoJS
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/johnpryan/tripledes-dart
 author: John Ryan <john.p.ryan4@gmail.com>
 
