@@ -111,6 +111,17 @@ void main() {
       var decoded = blockCipher.decodeB64(ciphertext);
       expect(decoded, equals(message));
     });
+
+    test('odd length with even key', () {
+      var blockCipher = new BlockCipher(new DESEngine(), "somekeys");
+      // length 177
+      var message = r'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+      var ciphertext = blockCipher.encode(message);
+      var decoded = blockCipher.decode(ciphertext);
+      expect(decoded, equals(message));
+    });
   });
 }
 
