@@ -112,9 +112,12 @@ void main() {
       expect(decoded, equals(message));
     });
 
-    test('json string failure', () {
+    test('odd length with even key', () {
       var blockCipher = new BlockCipher(new DESEngine(), "somekeys");
-      var message = r'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+      // length 177
+      var message = r'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+          'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
       var ciphertext = blockCipher.encode(message);
       var decoded = blockCipher.decode(ciphertext);
       expect(decoded, equals(message));
