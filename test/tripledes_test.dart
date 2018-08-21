@@ -83,7 +83,7 @@ void main() {
       b.init(true, cipherEncoded);
       var result = b.process(inpEncoded);
 
-      expect(BASE64.encode(wordsToUtf8(result).codeUnits), equals(expected));
+      expect(base64.encode(wordsToUtf8(result).codeUnits), equals(expected));
     });
 
     test('decode Base 64', () {
@@ -139,7 +139,7 @@ class TestCase {
     var inp = hexParse(this.inp);
     var expected = hexParse(this.expected);
     b.init(true, key);
-    var result = new List.from(inp);
+    var result = new List<int>.from(inp);
     b.processBlock(result, 0);
     expect(result, equals(expected));
     expect(hexToString(result), equals(this.expected));

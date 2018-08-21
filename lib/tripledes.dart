@@ -29,7 +29,7 @@ class BlockCipher {
   }
 
   String encodeB64(String message) {
-    return BASE64.encode(encode(message).codeUnits);
+    return base64.encode(encode(message).codeUnits);
   }
 
   String decodeB64(String ciphertext) {
