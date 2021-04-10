@@ -2,17 +2,17 @@ import 'dart:math';
 import 'package:tripledes/src/utils.dart';
 
 abstract class Engine {
-  void init(bool forEncryption, List<int> key);
-  List<int> process(List<int> dataWords);
+  void init(bool forEncryption, List<int?> key);
+  List<int?> process(List<int?> dataWords);
   void reset();
 }
 
 /// BufferedBlockAlgorithm.process()
 abstract class BaseEngine implements Engine {
-  bool forEncryption;
-  List<int> key;
+  late bool forEncryption;
+  List<int?>? key;
 
-  void init(bool forEncryption, List<int> key) {
+  void init(bool forEncryption, List<int?> key) {
     this.key = key;
     this.forEncryption = forEncryption;
   }
@@ -22,9 +22,9 @@ abstract class BaseEngine implements Engine {
     forEncryption = false;
   }
 
-  int processBlock(List<int> M, int offset);
+  int processBlock(List<int?> M, int offset);
 
-  List<int> process(List<int> dataWords) {
+  List<int?> process(List<int?> dataWords) {
     var blockSize = 2;
 
     if (forEncryption) {
@@ -54,7 +54,7 @@ abstract class BaseEngine implements Engine {
     var nBytesReady = min(nWordsReady * 4, dataSigBytes);
 
     // Process blocks
-    List<int> processedWords;
+    late List<int?> processedWords;
     if (nWordsReady != 0) {
       for (var offset = 0; offset < nWordsReady; offset += blockSize) {
         // Perform concrete-algorithm logic
@@ -66,7 +66,7 @@ abstract class BaseEngine implements Engine {
       dataWords.removeRange(0, nWordsReady);
     }
 
-    var result = new List<int>.generate(nBytesReady, (i) {
+    var result = new List<int?>.generate(nBytesReady, (i) {
       if (i < processedWords.length) {
         return processedWords[i];
       }

@@ -3,23 +3,23 @@ import 'package:tripledes/src/engine.dart';
 import 'package:tripledes/src/utils.dart';
 
 class DESEngine extends BaseEngine {
-  List<List<int>> _subKeys;
-  int _lBlock;
-  int _rBlock;
+  List<List<int>>? _subKeys;
+  int? _lBlock;
+  int? _rBlock;
 
   String get algorithmName => "DES";
 
   int get blockSize => 64 ~/ 32;
 
-  void init(bool forEncryption, List<int> key) {
+  void init(bool forEncryption, List<int?> key) {
     super.init(forEncryption, key);
 
     // Select 56 bits according to PC1
-    var keyBits = new List<int>(56);
+    var keyBits = new List<int?>.filled(56, null, growable: false);
     for (var i = 0; i < 56; i++) {
       var keyBitPos = PC1[i] - 1;
       keyBits[i] = (rightShift32(
-          this.key[rightShift32(keyBitPos, 5)], (31 - keyBitPos % 32))) &
+          this.key![rightShift32(keyBitPos, 5)]!, (31 - keyBitPos % 32))) &
       1;
     }
 
@@ -36,11 +36,11 @@ class DESEngine extends BaseEngine {
       for (var i = 0; i < 24; i++) {
         // Select from the left 28 key bits
         subKey[(i ~/ 6) | 0] |=
-            leftShift32(keyBits[((PC2[i] - 1) + bitShift) % 28], (31 - i % 6));
+            leftShift32(keyBits[((PC2[i] - 1) + bitShift) % 28]!, (31 - i % 6));
 
         // Select from the right 28 key bits
         subKey[4 + ((i ~/ 6) | 0)] |= leftShift32(
-            keyBits[28 + (((PC2[i + 24] - 1) + bitShift) % 28)], (31 - i % 6));
+            keyBits[28 + (((PC2[i + 24] - 1) + bitShift) % 28)]!, (31 - i % 6));
       }
 
       // Since each subkey is applied to an expanded 32-bit input,
@@ -54,18 +54,18 @@ class DESEngine extends BaseEngine {
     }
   }
 
-  int processBlock(List<int> M, int offset) {
-    List<List<int>> invSubKeys = new List(16);
+  int processBlock(List<int?> M, int offset) {
+    List<List<int>?> invSubKeys = new List.filled(16, null, growable: false);
     if (!forEncryption) {
       for (var i = 0; i < 16; i++) {
-        invSubKeys[i] = _subKeys[15 - i];
+        invSubKeys[i] = _subKeys![15 - i];
       }
     }
 
-    List<List<int>> subKeys = forEncryption ? _subKeys : invSubKeys;
+    List<List<int>?>? subKeys = forEncryption ? _subKeys : invSubKeys;
 
-    this._lBlock = M[offset].toSigned(32);
-    this._rBlock = M[offset + 1].toSigned(32);
+    this._lBlock = M[offset]!.toSigned(32);
+    this._rBlock = M[offset + 1]!.toSigned(32);
     // Initial permutation
     exchangeLR(4, 0x0f0f0f0f);
     exchangeLR(16, 0x0000ffff);
@@ -76,15 +76,15 @@ class DESEngine extends BaseEngine {
     // Rounds
     for (var round = 0; round < 16; round++) {
       // Shortcuts
-      var subKey = subKeys[round];
-      var lBlock = this._lBlock;
-      var rBlock = this._rBlock;
+      var subKey = subKeys![round];
+      var lBlock = this._lBlock!;
+      var rBlock = this._rBlock!;
 
       // Feistel function
       var f = 0.toSigned(32);
       for (var i = 0; i < 8; i++) {
-        (f |= (SBOX_P[i][((rBlock ^ subKey[i]).toSigned(32) & SBOX_MASK[i])
-            .toUnsigned(32)])
+        (f |= SBOX_P[i][((rBlock ^ subKey![i]).toSigned(32) & SBOX_MASK[i])
+            .toUnsigned(32)]!
             .toSigned(32))
             .toSigned(32);
       }
@@ -120,21 +120,15 @@ class DESEngine extends BaseEngine {
 
   // Swap bits across the left and right words
   void exchangeLR(offset, mask) {
-    var t =
-    (((rightShift32(this._lBlock, offset)).toSigned(32) ^ this._rBlock) &
-    mask)
-        .toSigned(32);
-    (this._rBlock ^= t).toSigned(32);
-    this._lBlock ^= (t << offset).toSigned(32);
+    var t = (((rightShift32(this._lBlock!, offset)).toSigned(32) ^ this._rBlock!) & mask).toSigned(32);
+    this._rBlock = (this._rBlock! ^ t).toSigned(32);
+    this._lBlock = (this._lBlock! ^ (t << offset)).toSigned(32);
   }
 
   void exchangeRL(offset, mask) {
-    var t =
-    (((rightShift32(this._rBlock, offset)).toSigned(32) ^ this._lBlock) &
-    mask)
-        .toSigned(32);
-    (this._lBlock ^= t).toSigned(32);
-    this._rBlock ^= (t << offset).toSigned(32);
+    var t = (((rightShift32(this._rBlock!, offset)).toSigned(32) ^ this._lBlock!) & mask).toSigned(32);
+    this._lBlock = (this._lBlock! ^ t).toSigned(32);
+    this._rBlock = (this._rBlock! ^ (t << offset)).toSigned(32);
   }
 }
 
