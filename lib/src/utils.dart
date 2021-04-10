@@ -130,10 +130,10 @@ void clamp(List<int?> data) {
 
 // Latin1.parse
 List<int?> utf8ToWords(String inp) {
-  var words = new List.generate(inp.length, (_) => 0);
+  var words = new List<int?>.generate(inp.length, (_) => 0);
   for (var i = 0; i < inp.length; i++) {
-    words[i >> 2] |= (inp.codeUnitAt(i) & 0xff).toSigned(32) <<
-        (24 - (i % 4) * 8).toSigned(32);
+    var index = i >> 2;
+    words[index] = words[index]! | (inp.codeUnitAt(i) & 0xff).toSigned(32) << (24 - (i % 4) * 8).toSigned(32);
   }
   return words;
 }
