@@ -139,7 +139,7 @@ class TestCase {
     var inp = hexParse(this.inp);
     var expected = hexParse(this.expected);
     b.init(true, key);
-    var result = new List<int>.from(inp);
+    var result = new List<int?>.from(inp);
     b.processBlock(result, 0);
     expect(result, equals(expected));
     expect(hexToString(result), equals(this.expected));
@@ -162,7 +162,7 @@ List<int> hexParse(String hexStr) {
   return new List.generate(hexStrLength ~/ 2, (i) => words[i]);
 }
 
-String hexToString(List<int> wordArray) {
+String hexToString(List<int?> wordArray) {
   // Shortcuts
   var words = wordArray.toList();
   var sigBytes = wordArray.length;
@@ -170,7 +170,7 @@ String hexToString(List<int> wordArray) {
   // Convert
   var hexChars = [];
   for (var i = 0; i < sigBytes; i++) {
-    var bite = (words[i >> 2] >> (24 - (i % 4) * 8)) & 0xff;
+    var bite = (words[i >> 2]! >> (24 - (i % 4) * 8)) & 0xff;
     hexChars.add((bite >> 4).toRadixString(16));
     hexChars.add((bite & 0x0f).toRadixString(16));
   }

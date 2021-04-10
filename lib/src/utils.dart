@@ -33,7 +33,7 @@ List<int> bit32ListFromUInt8List(Uint8List bytes) {
   return result;
 }
 
-void pkcs7Pad(List<int> data, int blockSize) {
+void pkcs7Pad(List<int?> data, int blockSize) {
   var blockSizeBytes = blockSize * 4;
   // Count padding bytes
   var nPaddingBytes = blockSizeBytes - data.length % blockSizeBytes;
@@ -62,14 +62,14 @@ void pkcs7Pad(List<int> data, int blockSize) {
   concat(data, padding);
 }
 
-void pkcs7Unpad(List<int> data, int blockSize) {
+void pkcs7Unpad(List<int?> data, int blockSize) {
   var sigBytes = data.length;
-  var nPaddingBytes = data[rightShift32(sigBytes - 1, 2)] & 0xff;
+  var nPaddingBytes = data[rightShift32(sigBytes - 1, 2)]! & 0xff;
   data.length -= nPaddingBytes;
 }
 
 /// wordarray.concat()
-concat(List<int> a, List<int> b) {
+concat(List<int?> a, List<int> b) {
   // Shortcuts
   var thisWords = a;
   var thatWords = b;
@@ -86,7 +86,7 @@ concat(List<int> a, List<int> b) {
       var thatByte = (thatWords[i >> 2] >> (24 - (i % 4) * 8)) & 0xff;
       var idx = (thisSigBytes + i) >> 2;
       expandList(thisWords, idx + 1);
-      thisWords[idx] |= thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
+      thisWords[idx] =  thisWords[idx]! | thatByte << (24 - ((thisSigBytes + i) % 4) * 8);
     }
   } else {
     // Copy one word at a time
@@ -101,7 +101,7 @@ concat(List<int> a, List<int> b) {
   a.length = thisSigBytes + thatSigBytes;
 }
 
-void expandList(List<int> data, int newLength) {
+void expandList(List<int?> data, int newLength) {
   if (newLength <= data.length) {
     return;
   }
@@ -117,51 +117,51 @@ void expandList(List<int> data, int newLength) {
   }
 }
 
-void clamp(List<int> data) {
+void clamp(List<int?> data) {
   // Shortcuts
   var words = data;
   var sigBytes = data.length;
 
   // Clamp
-  words[rightShift32(sigBytes, 2)] &=
-      (0xffffffff << (32 - (sigBytes % 4) * 8)).toSigned(32);
+  var shift32 = rightShift32(sigBytes, 2);
+  words[shift32] = words[shift32]! & (0xffffffff << (32 - (sigBytes % 4) * 8)).toSigned(32);
   words.length = (sigBytes / 4).ceil();
 }
 
 // Latin1.parse
-List<int> utf8ToWords(String inp) {
-  var words = new List.generate(inp.length, (_) => 0);
+List<int?> utf8ToWords(String inp) {
+  var words = new List<int?>.generate(inp.length, (_) => 0);
   for (var i = 0; i < inp.length; i++) {
-    words[i >> 2] |= (inp.codeUnitAt(i) & 0xff).toSigned(32) <<
-        (24 - (i % 4) * 8).toSigned(32);
+    var index = i >> 2;
+    words[index] = words[index]! | (inp.codeUnitAt(i) & 0xff).toSigned(32) << (24 - (i % 4) * 8).toSigned(32);
   }
   return words;
 }
 
 // Latin1.stringify
-String wordsToUtf8(List<int> words) {
+String wordsToUtf8(List<int?> words) {
   var sigBytes = words.length;
   var chars = <int>[];
   for (var i = 0; i < sigBytes; i++) {
     if (words[i >> 2] == null) {
       words[i >> 2] = 0;
     }
-    var bite = ((words[i >> 2]).toSigned(32) >> (24 - (i % 4) * 8)) & 0xff;
+    var bite = (words[i >> 2]!.toSigned(32) >> (24 - (i % 4) * 8)) & 0xff;
     chars.add(bite);
   }
 
   return new String.fromCharCodes(chars);
 }
 
-List<int> parseBase64(String base64Str) {
+List<int?> parseBase64(String base64Str) {
   const map =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-  List reverseMap;
+  List? reverseMap;
   // Shortcuts
   var base64StrLength = base64Str.length;
 
   if (reverseMap == null) {
-    reverseMap = new List<int>(123);
+    reverseMap = new List<int?>.filled(123, null, growable: false);
     for (var j = 0; j < map.length; j++) {
       reverseMap[map.codeUnits[j]] = j;
     }
@@ -169,23 +169,21 @@ List<int> parseBase64(String base64Str) {
 
   // Ignore padding
   var paddingChar = map.codeUnits[64];
-  if (paddingChar != null) {
-    var paddingIndex = base64Str.codeUnits.indexOf(paddingChar);
-    if (paddingIndex != -1) {
-      base64StrLength = paddingIndex;
-    }
+  var paddingIndex = base64Str.codeUnits.indexOf(paddingChar);
+  if (paddingIndex != -1) {
+    base64StrLength = paddingIndex;
   }
 
-  List<int> parseLoop(
-      String base64Str, int base64StrLength, List<int> reverseMap) {
+  List<int?> parseLoop(
+      String base64Str, int base64StrLength, List<int?> reverseMap) {
     var words = [];
     var nBytes = 0;
     for (var i = 0; i < base64StrLength; i++) {
       if (i % 4 != 0) {
-        var bits1 = reverseMap[base64Str.codeUnits[i - 1]] <<
+        var bits1 = reverseMap[base64Str.codeUnits[i - 1]]! <<
             ((i % 4) * 2).toSigned(32);
         var bits2 =
-            rightShift32(reverseMap[base64Str.codeUnits[i]], (6 - (i % 4) * 2))
+            rightShift32(reverseMap[base64Str.codeUnits[i]]!, (6 - (i % 4) * 2))
                 .toSigned(32);
         var idx = rightShift32(nBytes, 2);
         if (words.length <= idx) {
@@ -198,10 +196,10 @@ List<int> parseBase64(String base64Str) {
         nBytes++;
       }
     }
-    return new List<int>.generate(
+    return new List<int?>.generate(
         nBytes, (i) => i < words.length ? words[i] : 0);
   }
 
   // Convert
-  return parseLoop(base64Str, base64StrLength, reverseMap);
+  return parseLoop(base64Str, base64StrLength, reverseMap as List<int?>);
 }
